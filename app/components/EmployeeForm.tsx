@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -29,12 +29,14 @@ interface EmployeeFormProps {
   initialData: EmployeeFormData;
   onSubmit: (data: EmployeeFormData) => void;
   onCancel: () => void;
+  isUpdate?: boolean;
 }
 
 const EmployeeForm: React.FC<EmployeeFormProps> = ({
   initialData,
   onSubmit,
   onCancel,
+  isUpdate = false,
 }) => {
   const [formData, setFormData] = useState<EmployeeFormData>(initialData);
 
@@ -86,6 +88,10 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
     setFormData(initialData);
   };
 
+  useEffect(() => {
+    setFormData(initialData);
+  }, [initialData]);
+
   return (
     <div className="border rounded-lg p-6 bg-white shadow">
       <h2 className="text-xl font-semibold mb-4">Employee Information</h2>
@@ -100,6 +106,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleInputChange}
+                pattern="[A-Za-z]"
+                title="Alphabetic only"
                 required
               />
             </div>
@@ -110,6 +118,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleInputChange}
+                pattern="[A-Za-z]"
+                title="Alphabetic only"
                 required
               />
             </div>
@@ -130,11 +140,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             </div>
             <div>
               <Label>Gender *</Label>
-              <RadioGroup
-                value={formData.gender}
-                onValueChange={handleGenderChange}
-                className="flex space-x-4"
-              >
+              <RadioGroup value={formData.gender} onValueChange={handleGenderChange} className="flex space-x-4">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Male" id="male" />
                   <Label htmlFor="male">Male</Label>
@@ -189,18 +195,10 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             </div>
             <div>
               <Label>Employee Profile Colour</Label>
-              <RadioGroup
-                value={formData.profileColor}
-                onValueChange={handleColorChange}
-                className="flex space-x-4"
-              >
+              <RadioGroup value={formData.profileColor} onValueChange={handleColorChange} className="flex space-x-4">
                 {["Default", "Green", "Blue", "Red"].map((color) => (
                   <div key={color} className="flex flex-col items-center">
-                    <RadioGroupItem
-                      value={color}
-                      id={color.toLowerCase()}
-                      className="sr-only"
-                    />
+                    <RadioGroupItem value={color} id={color.toLowerCase()} className="sr-only" />
                     <Label
                       htmlFor={color.toLowerCase()}
                       className={`w-8 h-8 rounded-sm flex items-center justify-center cursor-pointer ${
@@ -236,7 +234,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 : "bg-primary hover:bg-primary/90"
             }
           >
-            Save
+            {isUpdate ? "Update Employee" : "Add Employee"}
           </Button>
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
