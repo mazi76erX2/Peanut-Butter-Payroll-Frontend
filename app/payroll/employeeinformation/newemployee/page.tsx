@@ -21,7 +21,6 @@ export default function EmployeeManagement() {
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeFormData>(initialFormData);
 
   const handleEmployeeSelect = (employee: Employee) => {
-    console.log(employee);
     setSelectedEmployee(employee as EmployeeFormData);
   };
 

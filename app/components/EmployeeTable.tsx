@@ -51,7 +51,9 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
             <TableRow
               key={index}
               onClick={() => onSelect(employee)}
-              className="cursor-pointer hover:bg-gray-100 transition-colors"
+              className={`cursor-pointer transition-colors hover:bg-gray-100 ${
+                index % 2 === 0 ? "bg-white" : "bg-gray-50"
+              }`}
             >
               <TableCell>{employee.employeeNumber}</TableCell>
               <TableCell>{employee.firstName}</TableCell>
