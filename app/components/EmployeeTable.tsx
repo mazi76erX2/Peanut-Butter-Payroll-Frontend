@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -12,17 +12,18 @@ import {
 import { Button } from "@/components/ui/button";
 
 export interface Employee {
-  employeeNumber: string;
-  firstName: string;
-  lastName: string;
+  id?: number;
+  employee_number: string;
+  first_name: string;
+  last_name: string;
   salutation: string;
-  profileColor: string;
+  profile_color: string;
 }
 
 interface EmployeeTableProps {
   employees: Employee[];
   onSelect: (employee: Employee) => void;
-  onAdd: () => void;
+  onAdd: (employee: Employee | null) => void;
 }
 
 const EmployeeTable: React.FC<EmployeeTableProps> = ({
@@ -30,40 +31,60 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
   onSelect,
   onAdd,
 }) => {
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+
+  const handleRowClick = (employee: Employee) => {
+    setSelectedEmployee(employee);
+    onSelect(employee);
+  };
+
+  const handleAddClick = () => {
+    onAdd(selectedEmployee);
+  };
+
   return (
     <div className="border rounded-lg p-4 bg-white shadow">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Current Employees</h2>
-        <Button onClick={onAdd}>Add Employee</Button>
+        <Button onClick={handleAddClick}>Add Employee</Button>
       </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Employee #</TableHead>
-            <TableHead>First Name</TableHead>
-            <TableHead>Last Name</TableHead>
-            <TableHead>Salutation</TableHead>
-            <TableHead>Profile Colour</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {employees.map((employee, index) => (
-            <TableRow
-              key={index}
-              onClick={() => onSelect(employee)}
-              className={`cursor-pointer transition-colors hover:bg-gray-100 ${
-                index % 2 === 0 ? "bg-white" : "bg-gray-50"
-              }`}
-            >
-              <TableCell>{employee.employeeNumber}</TableCell>
-              <TableCell>{employee.firstName}</TableCell>
-              <TableCell>{employee.lastName}</TableCell>
-              <TableCell>{employee.salutation}</TableCell>
-              <TableCell>{employee.profileColor}</TableCell>
+      <div className="max-h-[400px] overflow-y-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="sticky top-0 bg-white z-10">Employee #</TableHead>
+              <TableHead className="sticky top-0 bg-white z-10">First Name</TableHead>
+              <TableHead className="sticky top-0 bg-white z-10">Last Name</TableHead>
+              <TableHead className="sticky top-0 bg-white z-10">Salutation</TableHead>
+              <TableHead className="sticky top-0 bg-white z-10">Profile Colour</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {employees.map((employee, index) => {
+              const isSelected = selectedEmployee?.id === employee.id;
+              return (
+                <TableRow
+                  key={employee.id || index}
+                  onClick={() => handleRowClick(employee)}
+                  className={`cursor-pointer transition-colors hover:bg-gray-100 ${
+                    isSelected
+                      ? "bg-blue-100"
+                      : index % 2 === 0
+                      ? "bg-white"
+                      : "bg-gray-50"
+                  }`}
+                >
+                  <TableCell>{employee.employee_number}</TableCell>
+                  <TableCell>{employee.first_name}</TableCell>
+                  <TableCell>{employee.last_name}</TableCell>
+                  <TableCell>{employee.salutation}</TableCell>
+                  <TableCell>{employee.profile_color}</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };

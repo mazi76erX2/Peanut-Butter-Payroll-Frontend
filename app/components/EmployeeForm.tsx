@@ -15,6 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Check } from "lucide-react";
 
 export interface EmployeeFormData {
+  id?: number;
   employeeNumber: string;
   firstName: string;
   lastName: string;
@@ -39,6 +40,10 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   isUpdate = false,
 }) => {
   const [formData, setFormData] = useState<EmployeeFormData>(initialData);
+
+  useEffect(() => {
+    setFormData(initialData);
+  }, [initialData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -85,12 +90,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
-    setFormData(initialData);
   };
-
-  useEffect(() => {
-    setFormData(initialData);
-  }, [initialData]);
 
   return (
     <div className="border rounded-lg p-6 bg-white shadow">
@@ -106,8 +106,6 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleInputChange}
-                pattern="[A-Za-z]"
-                title="Alphabetic only"
                 required
               />
             </div>
@@ -118,8 +116,6 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleInputChange}
-                pattern="[A-Za-z]"
-                title="Alphabetic only"
                 required
               />
             </div>
@@ -140,7 +136,11 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             </div>
             <div>
               <Label>Gender *</Label>
-              <RadioGroup value={formData.gender} onValueChange={handleGenderChange} className="flex space-x-4">
+              <RadioGroup
+                value={formData.gender}
+                onValueChange={handleGenderChange}
+                className="flex space-x-4"
+              >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Male" id="male" />
                   <Label htmlFor="male">Male</Label>
@@ -189,16 +189,24 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 name="grossSalary"
                 value={formData.grossSalary}
                 onChange={handleSalaryChange}
-                pattern="\d*"
-                title="Numeric only"
+                pattern="^\d{1,3}(?: \d{3})*$"
+                title="Numeric only. Format as 1 000 (space as thousand separator)"
               />
             </div>
             <div>
               <Label>Employee Profile Colour</Label>
-              <RadioGroup value={formData.profileColor} onValueChange={handleColorChange} className="flex space-x-4">
+              <RadioGroup
+                value={formData.profileColor}
+                onValueChange={handleColorChange}
+                className="flex space-x-4"
+              >
                 {["Default", "Green", "Blue", "Red"].map((color) => (
                   <div key={color} className="flex flex-col items-center">
-                    <RadioGroupItem value={color} id={color.toLowerCase()} className="sr-only" />
+                    <RadioGroupItem
+                      value={color}
+                      id={color.toLowerCase()}
+                      className="sr-only"
+                    />
                     <Label
                       htmlFor={color.toLowerCase()}
                       className={`w-8 h-8 rounded-sm flex items-center justify-center cursor-pointer ${
@@ -234,7 +242,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 : "bg-primary hover:bg-primary/90"
             }
           >
-            {isUpdate ? "Update Employee" : "Add Employee"}
+            Save
           </Button>
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
