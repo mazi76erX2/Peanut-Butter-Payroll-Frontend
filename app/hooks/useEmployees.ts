@@ -26,7 +26,7 @@ const initialEmployees: EmployeeFormData[] = [
 
 export default function useEmployees(): [
   EmployeeFormData[],
-  React.Dispatch<React.SetStateAction<EmployeeFormData[]>>
+  React.Dispatch<React.SetStateAction<EmployeeFormData[]>>,
 ] {
   const [employees, setEmployees] = useState<EmployeeFormData[]>([]);
 

@@ -30,14 +30,12 @@ interface EmployeeFormProps {
   initialData: EmployeeFormData;
   onSubmit: (data: EmployeeFormData) => void;
   onCancel: () => void;
-  isUpdate?: boolean;
 }
 
 const EmployeeForm: React.FC<EmployeeFormProps> = ({
   initialData,
   onSubmit,
   onCancel,
-  isUpdate = false,
 }) => {
   const [formData, setFormData] = useState<EmployeeFormData>(initialData);
 
@@ -121,7 +119,10 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             </div>
             <div>
               <Label htmlFor="salutation">Salutation *</Label>
-              <Select onValueChange={handleSalutationChange} value={formData.salutation}>
+              <Select
+                onValueChange={handleSalutationChange}
+                value={formData.salutation}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
@@ -213,13 +214,15 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                         color === "Default"
                           ? "bg-gray-200"
                           : color === "Green"
-                          ? "bg-green-500"
-                          : color === "Blue"
-                          ? "bg-blue-500"
-                          : "bg-red-500"
+                            ? "bg-green-500"
+                            : color === "Blue"
+                              ? "bg-blue-500"
+                              : "bg-red-500"
                       }`}
                     >
-                      {formData.profileColor === color && <Check className="text-white" />}
+                      {formData.profileColor === color && (
+                        <Check className="text-white" />
+                      )}
                     </Label>
                     <span className="mt-1 text-sm">{color}</span>
                   </div>
@@ -236,10 +239,10 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               formData.profileColor === "Green"
                 ? "bg-green-500 hover:bg-green-600"
                 : formData.profileColor === "Blue"
-                ? "bg-blue-500 hover:bg-blue-600"
-                : formData.profileColor === "Red"
-                ? "bg-red-500 hover:bg-red-600"
-                : "bg-primary hover:bg-primary/90"
+                  ? "bg-blue-500 hover:bg-blue-600"
+                  : formData.profileColor === "Red"
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-primary hover:bg-primary/90"
             }
           >
             Save

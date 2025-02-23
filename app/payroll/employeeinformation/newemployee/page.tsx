@@ -3,33 +3,67 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import EmployeeTable, { Employee } from "../../../components/EmployeeTable";
-import EmployeeForm, { EmployeeFormData } from "../../../components/EmployeeForm";
+import EmployeeForm, {
+  EmployeeFormData,
+} from "../../../components/EmployeeForm";
 import { toast, Toaster } from "sonner";
+import Image from "next/image";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// API_URL is assumed to be defined in your environment
+const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
-async function fetchEmployees(): Promise<any[]> {
-  const res = await fetch(`${API_URL}/api/employees/?page=1&page_size=100`);
-  if (!res.ok) throw new Error("Failed to fetch employees");
-  return res.json();
+//
+// Types
+//
+interface ApiEmployee {
+  id?: number;
+  employee_number: string;
+  first_name: string;
+  last_name: string;
+  salutation: string;
+  gender?: string;
+  gross_salary: string;
+  profile_color: string;
+  full_name: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
-// Helper to convert snake_case keys from API to camelCase.
-function snakeToCamel(obj: Record<string, any>): Record<string, any> {
-  const newObj: Record<string, any> = {};
-  for (const key in obj) {
-    const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-    newObj[camelKey] = obj[key];
+//
+// API call
+//
+async function fetchEmployees(): Promise<ApiEmployee[]> {
+  const res = await fetch(`${API_URL}/api/employees/?page=1&page_size=100`);
+  if (!res.ok) throw new Error("Failed to fetch employees");
+  return (await res.json()) as ApiEmployee[];
+}
+
+//
+// Helper functions for key conversion
+//
+function snakeToCamel(obj: unknown): Record<string, unknown> {
+  if (typeof obj !== "object" || obj === null) return {};
+  const record = obj as Record<string, unknown>;
+  const newObj: Record<string, unknown> = {};
+  for (const key in record) {
+    const camelKey = key.replace(/_([a-z])/g, (_, letter) =>
+      letter.toUpperCase(),
+    );
+    newObj[camelKey] = record[key];
   }
   return newObj;
 }
 
-// Helper to convert camelCase keys to snake_case keys for backend submission.
-function camelToSnake(obj: Record<string, any>): Record<string, any> {
-  const newObj: Record<string, any> = {};
-  for (const key in obj) {
-    const snakeKey = key.replace(/[A-Z]/g, (letter) => "_" + letter.toLowerCase());
-    newObj[snakeKey] = obj[key];
+function camelToSnake(obj: unknown): Record<string, unknown> {
+  if (typeof obj !== "object" || obj === null) return {};
+  const record = obj as Record<string, unknown>;
+  const newObj: Record<string, unknown> = {};
+  for (const key in record) {
+    const snakeKey = key.replace(
+      /[A-Z]/g,
+      (letter) => "_" + letter.toLowerCase(),
+    );
+    newObj[snakeKey] = record[key];
   }
   return newObj;
 }
@@ -46,32 +80,40 @@ export default function EmployeeManagement() {
     profileColor: "Default",
   };
 
+  // Fetch employees as ApiEmployee[]
   const {
     data: employees,
     isLoading,
     error,
     refetch,
-  } = useQuery<EmployeeFormData[]>({
+  } = useQuery<ApiEmployee[]>({
     queryKey: ["employees"],
     queryFn: fetchEmployees,
   });
 
-  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeFormData>({ ...initialFormData });
+  // selectedEmployee is used for the form (camelCase)
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeFormData>({
+    ...initialFormData,
+  });
 
   useEffect(() => {
     if (error) {
-      toast.error(`Error: ${error instanceof Error ? error.message : error}`);
+      if (error instanceof Error) {
+        toast.error(`Error: ${error.message}`);
+      } else {
+        toast.error("An unknown error occurred.");
+      }
     }
   }, [error]);
 
   // Called when the form is submitted.
-  const handleFormSubmit = async (data: EmployeeFormData) => {
+  const handleFormSubmit = async (data: EmployeeFormData): Promise<void> => {
     const submissionData = {
       ...data,
       employeeNumber: parseInt(data.employeeNumber, 10),
       grossSalary: data.grossSalary.replace(/\s/g, ""),
     };
-    const payload = camelToSnake(submissionData);
+    const payload = camelToSnake(submissionData) as { id?: number };
     try {
       let res;
       if (payload.id) {
@@ -89,7 +131,7 @@ export default function EmployeeManagement() {
       }
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.detail || "Operation failed");
+        throw new Error((errData.detail as string) || "Operation failed");
       }
       await refetch();
       setSelectedEmployee({ ...initialFormData });
@@ -98,26 +140,29 @@ export default function EmployeeManagement() {
       } else {
         toast.success("Employee added successfully!");
       }
-    } catch (err: any) {
-      toast.error(`Error: ${err.message}`);
-      console.error(err);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(`Error: ${err.message}`);
+        console.error(err);
+      } else {
+        toast.error("An unknown error occurred.");
+      }
     }
   };
 
-  // Load a table row's data into the form.
-  const handleSelectEmployee = (employee: Employee) => {
-    setSelectedEmployee(snakeToCamel(employee) as EmployeeFormData);
+  // Load a table row's data into the form by converting from snake_case to camelCase.
+  const handleSelectEmployee = (employee: Employee): void => {
+    // employee here is in snake_case (same as ApiEmployee)
+    setSelectedEmployee(snakeToCamel(employee) as unknown as EmployeeFormData);
   };
 
   // Handle the "Add Employee" button in the table.
-  // If the employee already exists (has an ID), display an error toast.
-  // Otherwise, convert the data and call the create endpoint.
-  const handleDirectAdd = async (employee: Employee | null) => {
+  const handleDirectAdd = async (employee: Employee | null): Promise<void> => {
     if (!employee) {
       toast.error("Please select an employee from the table to add.");
       return;
     }
-    const employeeData = snakeToCamel(employee) as EmployeeFormData;
+    const employeeData = snakeToCamel(employee) as unknown as EmployeeFormData;
     if (employeeData.id) {
       toast.error("Employee already exists in the database.");
       return;
@@ -136,18 +181,22 @@ export default function EmployeeManagement() {
       });
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.detail || "Failed to add employee");
+        throw new Error((errData.detail as string) || "Failed to add employee");
       }
       await refetch();
       setSelectedEmployee({ ...initialFormData });
       toast.success("Employee added successfully!");
-    } catch (err: any) {
-      toast.error(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(`Error: ${err.message}`);
+      } else {
+        toast.error("An unknown error occurred.");
+      }
     }
   };
 
   // Clear the form
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     setSelectedEmployee({ ...initialFormData });
   };
 
@@ -159,7 +208,12 @@ export default function EmployeeManagement() {
           Peanut Butter Payroll
         </h1>
         <div className="mb-8 flex justify-center">
-          <img src="/illustration.svg" alt="Illustration" className="w-1/2 max-w-md" />
+          <Image
+            src="/illustration.svg"
+            alt="Illustration"
+            width={500}
+            height={300}
+          />
         </div>
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
@@ -170,8 +224,9 @@ export default function EmployeeManagement() {
           </div>
         ) : (
           <>
+            {/* Pass employees directly; they are in ApiEmployee (snake_case) format */}
             <EmployeeTable
-              employees={employees ?? []}
+              employees={(employees ?? []) as Employee[]}
               onSelect={handleSelectEmployee}
               onAdd={handleDirectAdd}
             />
@@ -181,7 +236,6 @@ export default function EmployeeManagement() {
                 initialData={selectedEmployee}
                 onSubmit={handleFormSubmit}
                 onCancel={handleCancel}
-                isUpdate={!!selectedEmployee.employeeNumber}
               />
             </div>
           </>

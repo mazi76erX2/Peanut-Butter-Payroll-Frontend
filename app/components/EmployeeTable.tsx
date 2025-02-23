@@ -31,7 +31,9 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
   onSelect,
   onAdd,
 }) => {
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null,
+  );
 
   const handleRowClick = (employee: Employee) => {
     setSelectedEmployee(employee);
@@ -52,11 +54,21 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="sticky top-0 bg-white z-10">Employee #</TableHead>
-              <TableHead className="sticky top-0 bg-white z-10">First Name</TableHead>
-              <TableHead className="sticky top-0 bg-white z-10">Last Name</TableHead>
-              <TableHead className="sticky top-0 bg-white z-10">Salutation</TableHead>
-              <TableHead className="sticky top-0 bg-white z-10">Profile Colour</TableHead>
+              <TableHead className="sticky top-0 bg-white z-10">
+                Employee #
+              </TableHead>
+              <TableHead className="sticky top-0 bg-white z-10">
+                First Name
+              </TableHead>
+              <TableHead className="sticky top-0 bg-white z-10">
+                Last Name
+              </TableHead>
+              <TableHead className="sticky top-0 bg-white z-10">
+                Salutation
+              </TableHead>
+              <TableHead className="sticky top-0 bg-white z-10">
+                Profile Colour
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -70,8 +82,8 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                     isSelected
                       ? "bg-blue-100"
                       : index % 2 === 0
-                      ? "bg-white"
-                      : "bg-gray-50"
+                        ? "bg-white"
+                        : "bg-gray-50"
                   }`}
                 >
                   <TableCell>{employee.employee_number}</TableCell>

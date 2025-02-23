@@ -1,7 +1,5 @@
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return (
-      redirect('/payroll/employeeinformation/newemployee')
-    );
+  return redirect("/payroll/employeeinformation/newemployee");
 }
