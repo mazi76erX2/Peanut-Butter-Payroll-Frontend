@@ -9,12 +9,8 @@ import EmployeeForm, {
 import { toast, Toaster } from "sonner";
 import Image from "next/image";
 
-// API_URL is assumed to be defined in your environment
 const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
-//
-// Types
-//
 interface ApiEmployee {
   id?: number;
   employee_number: string;
@@ -29,18 +25,14 @@ interface ApiEmployee {
   updated_at?: string;
 }
 
-//
-// API call
-//
+
 async function fetchEmployees(): Promise<ApiEmployee[]> {
   const res = await fetch(`${API_URL}/api/employees/?page=1&page_size=100`);
   if (!res.ok) throw new Error("Failed to fetch employees");
   return (await res.json()) as ApiEmployee[];
 }
 
-//
-// Helper functions for key conversion
-//
+
 function snakeToCamel(obj: unknown): Record<string, unknown> {
   if (typeof obj !== "object" || obj === null) return {};
   const record = obj as Record<string, unknown>;

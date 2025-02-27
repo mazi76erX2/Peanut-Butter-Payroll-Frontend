@@ -31,7 +31,6 @@ export default function useEmployees(): [
   const [employees, setEmployees] = useState<EmployeeFormData[]>([]);
 
   useEffect(() => {
-    // Simulate asynchronous loading (replace with actual fetch if needed)
     setTimeout(() => {
       setEmployees(initialEmployees);
     }, 500);
