@@ -37,7 +37,7 @@ A modern, responsive payroll management UI built with Next.js 15 and Tailwind CS
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/yourusername/peanut-butter-payroll-frontend.git
+git clone https://github.com/mazi76erx2/peanut-butter-payroll-frontend.git
 cd peanut-butter-payroll-frontend
 ```
 
