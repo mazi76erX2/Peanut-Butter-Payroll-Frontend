@@ -90,15 +90,14 @@ Built with ❤️ by [Your Name]
 
 ---
 
-## Explanation
+## Tools and Justifications
 
-- **Title & Description:** Introduces the project as a modern payroll management UI built with Next.js 15 and Tailwind CSS.
-- **Screenshot & Live Demo:** A placeholder for a screenshot and a link to the live demo on Vercel.
-- **Features Section:** Lists the key features including responsive design, dynamic employee management, real‑time data fetching with React Query, sleek visuals, and error feedback.
-- **Getting Started:** Step‑by‑step instructions to clone the repository, install dependencies, set up environment variables, run the development server, and view the application locally.
-- **Technologies Used:** Highlights major frameworks and libraries used (Next.js 15, Tailwind CSS, React Query, etc.).
-- **Design Resources & Inspiration:** Provides links to useful resources and design inspiration for modern UI design.
-- **Further Reading:** Offers links to documentation for Next.js, Tailwind CSS, and React Query.
+- **React**: React is a popular JavaScript library for building user interfaces.
+- **NextJS**: The React website recommends using a framework for building React applications, and Next.js is a popular choice that provides a lot of useful features out of the box.
+- **Tailwind CSS**: Tailwind CSS is a utility-first CSS framework that provides a set of pre-built utility classes that can be used to style web applications. It is easy to use and provides a flexible way to style web applications.
+- **ReactQuery**: ReactQuery is a popular library for managing server state in React applications. It provides a way to fetch and cache data from a server and keep it in sync with the UI.
+- **TypeScript**: TypeScript is a popular superset of JavaScript that provides static typing and other features to help developers write more robust and maintainable code. It is widely used in the React ecosystem and provides a lot of benefits for building web applications.
+
 
 ---
 
